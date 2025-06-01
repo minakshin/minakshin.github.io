@@ -92,20 +92,19 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 });
 
-// Contact form handling
+// Contact form handling with mailto
 const contactForm = document.querySelector('.contact-form');
 if (contactForm) {
     contactForm.addEventListener('submit', function(e) {
         e.preventDefault();
 
-        // Get form data
         const formData = new FormData(this);
-        const name = formData.get('name');
-        const email = formData.get('email');
-        const subject = formData.get('subject');
-        const message = formData.get('message');
+        const name = formData.get('name').trim();
+        const email = formData.get('email').trim();
+        const subject = formData.get('subject').trim();
+        const message = formData.get('message').trim();
 
-        // Simple validation
+        // Validation
         if (!name || !email || !subject || !message) {
             showNotification('Please fill in all fields', 'error');
             return;
@@ -116,9 +115,43 @@ if (contactForm) {
             return;
         }
 
-        // Simulate form submission
-        showNotification('Thank you for your message! I\'ll get back to you soon.', 'success');
-        this.reset();
+        // Professional email template
+        const emailSubject = `Portfolio Inquiry: ${subject}`;
+        const emailBody = `Dear Minakshi Zambre,
+
+I hope this email finds you well. I'm contacting you through your portfolio website regarding: ${subject}
+
+Contact Information:
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+Name: ${name}
+Email: ${email}
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+Message:
+${message}
+
+I look forward to hearing from you.
+
+Best regards,
+${name}
+
+---
+This email was sent through your portfolio contact form at ${window.location.href}`;
+
+        // Create and open mailto
+        const mailtoURL = `mailto:minanajardhane@gmail.com?subject=${encodeURIComponent(emailSubject)}&body=${encodeURIComponent(emailBody)}`;
+
+        try {
+            window.location.href = mailtoURL;
+            showNotification('Opening your email client... Please send the email to complete your message.', 'success');
+
+            // Reset form
+            setTimeout(() => {
+                this.reset();
+            }, 2000);
+        } catch (error) {
+            showNotification('Unable to open email client. Please email me directly at minanajardhane@gmail.com', 'error');
+        }
     });
 }
 
