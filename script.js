@@ -220,11 +220,31 @@ function showNotification(message, type = 'info') {
 // Typing animation for hero title
 function typeWriter(element, text, speed = 100) {
     let i = 0;
+    let isTag = false;
+    let textToShow = '';
+
     element.innerHTML = '';
 
     function type() {
         if (i < text.length) {
-            element.innerHTML += text.charAt(i);
+            const char = text.charAt(i);
+
+            // Check if we're entering or leaving an HTML tag
+            if (char === '<') {
+                isTag = true;
+            }
+
+            textToShow += char;
+
+            if (char === '>') {
+                isTag = false;
+                // Update innerHTML when we complete a tag
+                element.innerHTML = textToShow;
+            } else if (!isTag) {
+                // Only update innerHTML for visible characters (not inside tags)
+                element.innerHTML = textToShow;
+            }
+
             i++;
             setTimeout(type, speed);
         }
